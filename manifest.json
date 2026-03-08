@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Judge Properly",
+  "description": "Improves the Hack Club Flavortown judging flow with a cleaner Judge panel and draft persistence",
+  "version": "1.0",
+  "permissions": ["contextMenus", "tabs", "scripting", "activeTab", "clipboardWrite", "windows", "storage", "declarativeNetRequestWithHostAccess"],
+  "host_permissions": ["https://flavortown.hackclub.com/*"],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://flavortown.hackclub.com/votes/new*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "16": "icons/gavel-16.png",
+    "32": "icons/gavel-32.png",
+    "48": "icons/gavel-48.png",
+    "128": "icons/gavel-128.png"
+  },
+  "action": {
+    "default_icon": {
+      "16": "icons/gavel-16.png",
+      "32": "icons/gavel-32.png",
+      "48": "icons/gavel-48.png",
+      "128": "icons/gavel-128.png"
+    }
+  }
+}
