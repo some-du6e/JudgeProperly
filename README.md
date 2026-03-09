@@ -59,7 +59,7 @@ The repository includes a GitHub Actions workflow at `.github/workflows/release-
 It runs on every push to `main` and will:
 
 - build `judgeproperly.zip` with `build.bat`
-- rebuild a signed `judgeproperly.crx`
+- rebuild a signed `judgeproperly.crx` with `crx3`
 - create a GitHub Release for that commit
 - upload both files as release assets
 

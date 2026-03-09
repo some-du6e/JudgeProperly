@@ -21,6 +21,11 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v5
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Read release metadata
         id: metadata
         shell: pwsh
@@ -40,9 +45,9 @@ jobs:
         shell: cmd
         run: build.bat
 
-      - name: Install Chrome
-        id: setup-chrome
-        uses: browser-actions/setup-chrome@v2
+      - name: Install crx3 packer
+        shell: pwsh
+        run: npm install --global crx3@2.0.0
 
       - name: Restore signing key
         id: signing-key
@@ -61,22 +66,18 @@ jobs:
       - name: Build crx package
         shell: pwsh
         run: |
-          $chromePath = "${{ steps.setup-chrome.outputs.chrome-path }}"
           $extensionPath = Join-Path $PWD 'dist'
-          $generatedCrx = Join-Path $PWD 'dist.crx'
           $releaseCrx = Join-Path $PWD 'judgeproperly.crx'
 
-          & $chromePath "--pack-extension=$extensionPath" "--pack-extension-key=${{ steps.signing-key.outputs.pem_path }}"
+          crx3 --crxPath $releaseCrx --keyPath "${{ steps.signing-key.outputs.pem_path }}" $extensionPath
 
           if ($LASTEXITCODE -ne 0) {
-            throw "Chrome failed to package the extension."
+            throw "crx3 failed to package the extension."
           }
 
-          if (!(Test-Path $generatedCrx)) {
-            throw "Expected packaged extension at $generatedCrx, but it was not created."
+          if (!(Test-Path $releaseCrx)) {
+            throw "Expected packaged extension at $releaseCrx, but it was not created."
           }
-
-          Move-Item $generatedCrx $releaseCrx -Force
 
       - name: Publish GitHub release
         shell: pwsh
