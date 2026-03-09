@@ -3,16 +3,7 @@
   "name": "Judge Properly",
   "description": "Improves the Hack Club Flavortown judging flow with a cleaner Judge panel and draft persistence",
   "version": "1.0",
-  "permissions": [
-    "contextMenus",
-    "tabs",
-    "scripting",
-    "activeTab",
-    "clipboardWrite",
-    "windows",
-    "storage",
-    "declarativeNetRequestWithHostAccess"
-  ],
+  "permissions": ["contextMenus", "tabs", "scripting", "activeTab", "clipboardWrite", "windows", "storage", "declarativeNetRequestWithHostAccess"],
   "host_permissions": ["https://flavortown.hackclub.com/*"],
   "background": {
     "service_worker": "service-worker.js"

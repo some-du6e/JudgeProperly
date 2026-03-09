@@ -10,6 +10,13 @@ let restoreAppliedForKey = null;
 let autosaveBound = false;
 let saveTimerId = null;
 
+function cancelPendingSave() {
+  if (saveTimerId !== null) {
+    window.clearTimeout(saveTimerId);
+    saveTimerId = null;
+  }
+}
+
 function getVoteForm() {
   const form = document.querySelector(VOTE_FORM_SELECTOR);
   return form instanceof HTMLFormElement ? form : null;
@@ -71,6 +78,19 @@ async function saveDraft(form) {
   await chrome.storage.local.set({ [getDraftStorageKey(form)]: draft });
 }
 
+function queueDraftSave(form) {
+  cancelPendingSave();
+  saveTimerId = window.setTimeout(() => {
+    saveTimerId = null;
+    void saveDraft(form);
+  }, 100);
+}
+
+function flushDraftSave(form) {
+  cancelPendingSave();
+  void saveDraft(form);
+}
+
 async function clearDraft(form) {
   await chrome.storage.local.remove(getDraftStorageKey(form));
 }
@@ -108,20 +128,9 @@ function bindDraftPersistence(form) {
     return;
   }
 
-  const persistDraft = () => {
-    if (saveTimerId !== null) {
-      window.clearTimeout(saveTimerId);
-    }
-
-    saveTimerId = window.setTimeout(() => {
-      saveTimerId = null;
-      void saveDraft(form);
-    }, 100);
-  };
-
-  form.addEventListener('input', persistDraft);
-  form.addEventListener('change', persistDraft);
-  form.addEventListener('submit', persistDraft, true);
+  form.addEventListener('input', () => queueDraftSave(form));
+  form.addEventListener('change', () => queueDraftSave(form));
+  form.addEventListener('submit', () => flushDraftSave(form), true);
 
   form.dataset.judgeproperlyDraftBound = 'true';
 }
@@ -131,17 +140,24 @@ function bindAutosaveListeners() {
     return;
   }
 
-  const persistCurrentDraft = () => {
+  const queueCurrentDraft = () => {
     const form = getVoteForm();
     if (form) {
-      void saveDraft(form);
+      queueDraftSave(form);
     }
   };
 
-  document.addEventListener('input', persistCurrentDraft, true);
-  document.addEventListener('change', persistCurrentDraft, true);
-  document.addEventListener('submit', persistCurrentDraft, true);
-  window.addEventListener('beforeunload', persistCurrentDraft);
+  const flushCurrentDraft = () => {
+    const form = getVoteForm();
+    if (form) {
+      flushDraftSave(form);
+    }
+  };
+
+  document.addEventListener('input', queueCurrentDraft, true);
+  document.addEventListener('change', queueCurrentDraft, true);
+  document.addEventListener('submit', flushCurrentDraft, true);
+  window.addEventListener('beforeunload', flushCurrentDraft);
 
   autosaveBound = true;
 }

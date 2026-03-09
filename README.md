@@ -52,6 +52,27 @@ This script:
 
 The generated zip is suitable for manual distribution or upload to whatever internal workflow you use for Flavortown extensions.
 
+## GitHub Releases automation
+
+The repository includes a GitHub Actions workflow at `.github/workflows/release-extension.yml`.
+
+It runs on every push to `main` and will:
+
+- build `judgeproperly.zip` with `build.bat`
+- rebuild a signed `judgeproperly.crx`
+- create a GitHub Release for that commit
+- upload both files as release assets
+
+Before it can build the `.crx` in GitHub, add a repository secret named `CHROME_EXTENSION_PEM_BASE64`.
+
+You can generate the secret value from your local `judgeproperly.pem` like this in PowerShell:
+
+```powershell
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("judgeproperly.pem"))
+```
+
+Copy the printed value into the repository secret. The workflow reconstructs the key on the runner and uses it only for packaging.
+
 ## How draft persistence works
 
 Judge Properly builds a storage key from the hidden Flavortown suggestion token. When possible, it extracts a stable id from the decoded token payload, such as `ship_event_id` or `user_id`. That lets the extension keep separate drafts for different submissions.
