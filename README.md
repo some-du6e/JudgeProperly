@@ -26,25 +26,22 @@ Judge Properly is a Manifest V3 browser extension for Hack Club Flavortown. It c
 ## Local setup
 
 1. Clone or download this repository.
-2. Open `service-worker.js`.
-3. Set `FLAVORTOWN_PROJECT_ID` to your numeric Flavortown project id if you need extension registration enabled.
-4. Open `chrome://extensions` in your browser.
-5. Turn on Developer mode.
-6. Click Load unpacked.
-7. Select this repository folder.
+2. Open `chrome://extensions` in your browser.
+3. Turn on Developer mode.
+4. Click Load unpacked.
+5. Select this repository folder.
 
-If `FLAVORTOWN_PROJECT_ID` is left blank, the extension still loads and draft persistence still works. Only the Flavortown registration header is skipped.
+The extension loads and draft persistence works out of the box.
 
 ## Packaging
 
 Run:
 
 ```bat
-build.bat
+build.batdasdas
 ```
 
-This script:
-
+This script:12
 - recreates the `dist/` folder
 - copies the extension source into `dist/`
 - excludes repo-only files such as `.git`, `README.md`, `LICENSE`, and previous zip output
@@ -88,4 +85,4 @@ Saved data stays in `chrome.storage.local` on your machine and is restored the n
 
 ## License
 
-This project is licensed under the terms in [LICENSE](LICENSE).
+This project is licensed under the terms in [LICENSE](LICENSE).ddddasqwexzaqWEeqwwe
